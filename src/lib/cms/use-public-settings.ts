@@ -38,8 +38,8 @@ const DEFAULT_SETTINGS: PublicSettings = {
   site_branding: {
     siteName: "WappNext",
     siteTagline: "AI-Powered WhatsApp CRM & Marketing Automation",
-    logoLightUrl: "/images/logo/wappnext-logo-light.png",
-    logoDarkUrl: "/images/logo/wappnext-logo.png",
+    logoLightUrl: "/images/logo/wappnext-logo.png",
+    logoDarkUrl: "/images/logo/wappnext-logo-light.png",
     faviconUrl: "/favicon.ico",
     primaryColor: "#7c3aed",
   },
@@ -61,8 +61,8 @@ const DEFAULT_SETTINGS: PublicSettings = {
   contact_info: {
     supportEmail: "support@chatnexgen.online",
     salesEmail: "sales@chatnexgen.online",
-    phone: "+91 98765 43210",
-    address: "Registered Office: India",
+    phone: "+91 9168 08 1355",
+    address: "Pune, Maharashtra, India",
     businessHours: "Monday - Saturday, 9:00 AM - 6:00 PM IST",
     helpDeskUrl: "/contact-us",
   },

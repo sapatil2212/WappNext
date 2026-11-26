@@ -64,8 +64,8 @@ export default function SuperAdminCmsPage() {
   const [branding, setBranding] = useState({
     siteName: "WappNext",
     siteTagline: "AI-Powered WhatsApp CRM & Marketing Automation",
-    logoLightUrl: "/images/logo/wappnext-logo-light.png",
-    logoDarkUrl: "/images/logo/wappnext-logo.png",
+    logoLightUrl: "/images/logo/wappnext-logo.png",
+    logoDarkUrl: "/images/logo/wappnext-logo-light.png",
     faviconUrl: "/favicon.ico",
     primaryColor: "#7c3aed",
   });
@@ -89,7 +89,7 @@ export default function SuperAdminCmsPage() {
   const [contact, setContact] = useState({
     supportEmail: "chatnexgen@gmail.com",
     salesEmail: "sales@chatnexgen.com",
-    phone: "+91 98765 43210",
+    phone: "+91 9168 08 1355",
     address: "Pune, Maharashtra, India",
     businessHours: "Monday - Saturday, 9:00 AM - 6:00 PM IST",
     helpDeskUrl: "/contact-us",
@@ -410,7 +410,7 @@ export default function SuperAdminCmsPage() {
                   <input
                     value={branding.logoLightUrl}
                     onChange={(e) => setBranding({ ...branding, logoLightUrl: e.target.value })}
-                    placeholder="/images/logo/wappnext-logo-light.png"
+                    placeholder="/images/logo/wappnext-logo.png"
                     className="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-200 font-mono focus:outline-none focus:border-violet-500"
                   />
                 </div>
@@ -420,7 +420,7 @@ export default function SuperAdminCmsPage() {
                   <input
                     value={branding.logoDarkUrl}
                     onChange={(e) => setBranding({ ...branding, logoDarkUrl: e.target.value })}
-                    placeholder="/images/logo/wappnext-logo.png"
+                    placeholder="/images/logo/wappnext-logo-light.png"
                     className="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-200 font-mono focus:outline-none focus:border-violet-500"
                   />
                 </div>
@@ -436,7 +436,7 @@ export default function SuperAdminCmsPage() {
                       src={branding.logoLightUrl}
                       alt="Light Logo Preview"
                       className="h-7 w-auto object-contain max-w-[180px]"
-                      onError={(e: any) => (e.target.src = "/images/logo/wappnext-logo-light.png")}
+                      onError={(e: any) => (e.target.src = "/images/logo/wappnext-logo.png")}
                     />
                   </div>
 
@@ -446,7 +446,7 @@ export default function SuperAdminCmsPage() {
                       src={branding.logoDarkUrl}
                       alt="Dark Logo Preview"
                       className="h-7 w-auto object-contain max-w-[180px]"
-                      onError={(e: any) => (e.target.src = "/images/logo/wappnext-logo.png")}
+                      onError={(e: any) => (e.target.src = "/images/logo/wappnext-logo-light.png")}
                     />
                   </div>
                 </div>

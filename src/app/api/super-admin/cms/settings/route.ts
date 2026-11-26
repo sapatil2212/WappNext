@@ -14,8 +14,8 @@ async function isAuthed(): Promise<boolean> {
 const DEFAULT_BRANDING = {
   siteName: "WappNext",
   siteTagline: "AI-Powered WhatsApp CRM & Marketing Automation",
-  logoLightUrl: "/images/logo/wappnext-logo-light.png",
-  logoDarkUrl: "/images/logo/wappnext-logo.png",
+  logoLightUrl: "/images/logo/wappnext-logo.png",
+  logoDarkUrl: "/images/logo/wappnext-logo-light.png",
   faviconUrl: "/favicon.ico",
   primaryColor: "#7c3aed",
 };
@@ -39,7 +39,7 @@ const DEFAULT_FOOTER = {
 const DEFAULT_CONTACT = {
   supportEmail: "chatnexgen@gmail.com",
   salesEmail: "sales@chatnexgen.com",
-  phone: "+91 98765 43210",
+  phone: "+91 9168 08 1355",
   address: "Pune, Maharashtra, India",
   businessHours: "Monday - Saturday, 9:00 AM - 6:00 PM IST",
   helpDeskUrl: "/contact-us",

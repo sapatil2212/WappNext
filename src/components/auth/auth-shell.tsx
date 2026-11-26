@@ -23,7 +23,7 @@ const TRUST_POINTS = ["Official WhatsApp Business API", "0% markup on Meta fees"
 export function AuthShell({ children, topRight, maxWidth = "narrow", className }: AuthShellProps) {
   const { resolvedTheme } = useMarketingTheme();
   const logo =
-    resolvedTheme === "light" ? "/images/logo/wappnext-logo-light.png" : "/images/logo/wappnext-logo.png";
+    resolvedTheme === "light" ? "/images/logo/wappnext-logo.png" : "/images/logo/wappnext-logo-light.png";
 
   return (
     <div className="flex min-h-screen w-full bg-[var(--m-bg-primary)]">

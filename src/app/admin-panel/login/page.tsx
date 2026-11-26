@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
             <img
-              src="/images/logo/wappnext-logo.png"
+              src="/images/logo/wappnext-logo-light.png"
               alt="WappNext Logo"
               className="h-14 w-auto object-contain mb-4"
             />

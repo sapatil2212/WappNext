@@ -30,8 +30,8 @@ export function Footer() {
   ];
 
   const logoSrc = isLight
-    ? branding.logoLightUrl || "/images/logo/wappnext-logo-light.png"
-    : branding.logoDarkUrl || "/images/logo/wappnext-logo.png";
+    ? branding.logoLightUrl || "/images/logo/wappnext-logo.png"
+    : branding.logoDarkUrl || "/images/logo/wappnext-logo-light.png";
 
   return (
     <footer className="relative w-full border-t border-[var(--m-border-primary)] bg-[var(--m-bg-glass)] py-16 px-8 sm:px-20 lg:px-32 overflow-hidden">

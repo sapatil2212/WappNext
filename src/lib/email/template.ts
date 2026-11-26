@@ -18,7 +18,7 @@
 // Override with EMAIL_LOGO_URL if the logo is hosted elsewhere.
 const LOGO_URL =
   process.env.EMAIL_LOGO_URL ||
-  "https://chatnexgen.online/images/logo/wappnext-logo-light.png";
+  "https://chatnexgen.online/images/logo/wappnext-logo.png";
 const SUPPORT_EMAIL = "chatnexgen@gmail.com";
 
 // ─── Design tokens ──────────────────────────────────────────────────────────

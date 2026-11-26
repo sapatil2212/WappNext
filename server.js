@@ -110,30 +110,53 @@ resolvePort().then((p) => {
     }
   }, 60 * 1000); // 1 minute
 
-  const allowedOrigins = [
-    process.env.NEXT_PUBLIC_SITE_URL,
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:3001",
-    "http://127.0.0.1:3002",
-    `http://localhost:${port}`,
-    `http://127.0.0.1:${port}`,
-  ].filter(Boolean);
+  // Origins (scheme://host[:port], no path / trailing slash) allowed to open a
+  // socket from another site. The site's own pages never need to be listed:
+  // a request whose Origin host equals the Host it was sent to is same-origin.
+  const toOrigin = (value) => {
+    try { return new URL(String(value).trim()).origin; } catch { return null; }
+  };
+  const allowedOrigins = new Set(
+    [
+      process.env.NEXT_PUBLIC_SITE_URL,
+      ...(process.env.SOCKET_ALLOWED_ORIGINS || "").split(","),
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:3002",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:3001",
+      "http://127.0.0.1:3002",
+      `http://localhost:${port}`,
+      `http://127.0.0.1:${port}`,
+    ].filter(Boolean).map(toOrigin).filter(Boolean)
+  );
+
+  const isOriginAllowed = (origin, req) => {
+    if (!origin || dev) return true; // non-browser clients, local development
+    const normalized = toOrigin(origin);
+    if (!normalized) return false;
+    if (allowedOrigins.has(normalized)) return true;
+    // Same-origin: the page was served by the host this request reached
+    // (behind nginx the public host arrives in Host / X-Forwarded-Host).
+    const originHost = new URL(normalized).host.toLowerCase();
+    const hosts = [req.headers["x-forwarded-host"], req.headers.host]
+      .filter(Boolean)
+      .flatMap((h) => String(h).split(","))
+      .map((h) => h.trim().toLowerCase());
+    return hosts.includes(originHost);
+  };
 
   const io = new Server(httpServer, {
+    // Enforce the origin policy here: a rejection is a clean 403 the client
+    // reports, instead of a CORS-middleware failure (400) it retries forever.
+    allowRequest: (req, callback) => {
+      const ok = isOriginAllowed(req.headers.origin, req);
+      if (!ok) console.warn(`[Socket.io] Rejected connection from origin ${req.headers.origin}`);
+      callback(null, ok);
+    },
     cors: {
-      origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, curl, server-to-server) or in development
-        if (!origin || dev) {
-          return callback(null, true);
-        }
-        if (allowedOrigins.some((allowed) => origin === allowed || origin.startsWith(allowed))) {
-          return callback(null, true);
-        }
-        return callback(new Error("[Socket.io] CORS policy violation: origin not allowed"), false);
-      },
+      // Only decides which CORS headers are sent; never aborts the request.
+      origin: (origin, callback) => callback(null, !origin || dev || allowedOrigins.has(toOrigin(origin))),
       methods: ["GET", "POST"],
       credentials: true,
     }

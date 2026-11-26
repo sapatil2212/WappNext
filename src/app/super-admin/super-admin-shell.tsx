@@ -67,9 +67,9 @@ function Sidebar({ open, onClose, pending, onSignOut }: { open: boolean; onClose
         <div className="flex h-14 shrink-0 items-center gap-2 border-b border-sidebar-border px-4">
           <Link href="/super-admin" className="flex min-w-0 items-center gap-2" onClick={onClose}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo/wappnext-logo-light.png" alt="WappNext" className="h-7 w-auto object-contain dark:hidden" />
+            <img src="/images/logo/wappnext-logo.png" alt="WappNext" className="h-7 w-auto object-contain dark:hidden" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo/wappnext-logo.png" alt="WappNext" className="hidden h-7 w-auto object-contain dark:block" />
+            <img src="/images/logo/wappnext-logo-light.png" alt="WappNext" className="hidden h-7 w-auto object-contain dark:block" />
             <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary">Admin</span>
           </Link>
           <button type="button" onClick={onClose} aria-label="Close menu" className="ml-auto flex size-8 items-center justify-center rounded-md text-sidebar-foreground/60 hover:bg-sidebar-accent lg:hidden">

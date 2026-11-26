@@ -37,8 +37,8 @@ export function GlassNavbar() {
 
   const logoSrc =
     resolvedTheme === "light"
-      ? settings.site_branding.logoLightUrl || "/images/logo/wappnext-logo-light.png"
-      : settings.site_branding.logoDarkUrl || "/images/logo/wappnext-logo.png";
+      ? settings.site_branding.logoLightUrl || "/images/logo/wappnext-logo.png"
+      : settings.site_branding.logoDarkUrl || "/images/logo/wappnext-logo-light.png";
 
   // Track scroll position (only re-renders when crossing the threshold).
   useEffect(() => {

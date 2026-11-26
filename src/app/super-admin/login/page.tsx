@@ -80,9 +80,9 @@ export default function SuperAdminLoginPage() {
       <div className="flex items-center justify-between px-5 pt-5 sm:px-8">
         <Link href="/" aria-label="WappNext home" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/logo/wappnext-logo-light.png" alt="WappNext" className="h-7 w-auto object-contain dark:hidden" />
+          <img src="/images/logo/wappnext-logo.png" alt="WappNext" className="h-7 w-auto object-contain dark:hidden" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/logo/wappnext-logo.png" alt="WappNext" className="hidden h-7 w-auto object-contain dark:block" />
+          <img src="/images/logo/wappnext-logo-light.png" alt="WappNext" className="hidden h-7 w-auto object-contain dark:block" />
         </Link>
         <button
           type="button"

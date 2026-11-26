@@ -43,7 +43,7 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
         <div className="flex h-14 items-center justify-between gap-2 border-b border-slate-800 px-4">
           <Link href="/admin-panel" className="flex items-center gap-2.5">
             <img
-              src="/images/logo/wappnext-logo.png"
+              src="/images/logo/wappnext-logo-light.png"
               alt="WappNext Logo"
               className="h-8 w-auto object-contain"
             />

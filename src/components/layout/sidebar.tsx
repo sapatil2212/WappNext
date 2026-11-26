@@ -168,7 +168,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-sidebar-border px-4">
           <Link href="/dashboard" className="flex items-center gap-2">
             <img
-              src={isLight ? "/images/logo/wappnext-logo-light.png" : "/images/logo/wappnext-logo.png"}
+              src={isLight ? "/images/logo/wappnext-logo.png" : "/images/logo/wappnext-logo-light.png"}
               alt="WappNext Logo"
               className="h-8 w-auto object-contain"
             />
