@@ -1,0 +1,67 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { BarChart3, Building2, ChevronDown, LayoutDashboard, QrCode, Star } from 'lucide-react';
+
+import { isReviewTabActive, REVIEW_TABS } from '@/components/reviews/shared';
+import { cn } from '@/lib/utils';
+
+const ICONS = [LayoutDashboard, Building2, QrCode, BarChart3];
+const ITEMS = REVIEW_TABS.map((t, i) => ({ ...t, icon: ICONS[i] }));
+
+/** Sidebar group for the Google Review module. Self-contained so the sidebar only renders it. */
+export function ReviewsNavSection() {
+  const pathname = usePathname();
+  const inReviews = pathname === '/reviews' || pathname.startsWith('/reviews/');
+  const [open, setOpen] = useState(inReviews);
+  const [wasInReviews, setWasInReviews] = useState(inReviews);
+  // Opening the module from anywhere expands the group, but once there the
+  // user stays in control: the chevron must be able to collapse it again.
+  if (inReviews !== wasInReviews) {
+    setWasInReviews(inReviews);
+    if (inReviews) setOpen(true);
+  }
+  const expanded = open;
+
+  return (
+    <>
+      <div className="my-3 border-t border-sidebar-border/60" />
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={expanded}
+        className={cn(
+          'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium transition-colors lg:py-1.5',
+          inReviews ? 'text-primary' : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+        )}
+      >
+        <Star className="h-4 w-4 shrink-0" />
+        <span className="flex-1 truncate text-left">Reviews</span>
+        <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform duration-200', expanded && 'rotate-180')} />
+      </button>
+      {expanded && (
+        <ul className="mt-0.5 flex flex-col gap-0.5 border-l border-sidebar-border/60 pl-2 ml-4">
+          {ITEMS.map((item) => {
+            const active = isReviewTabActive(item, pathname);
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-2 rounded-lg px-2 py-1.5 text-[11px] font-medium transition-colors',
+                    active ? 'bg-primary/10 text-primary' : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                  )}
+                >
+                  <item.icon className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </>
+  );
+}

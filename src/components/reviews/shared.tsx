@@ -1,0 +1,281 @@
+'use client';
+
+import type { SocialPlatform } from '@/lib/reviews/social-platforms';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { X } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { api } from '@/lib/campaigns/api';
+import { cn } from '@/lib/utils';
+
+// ── types (mirror the review API) ─────────────────────────────────────
+
+export interface ReviewBusiness {
+  id: string;
+  name: string;
+  category: string | null;
+  description: string | null;
+  address: string | null;
+  googleReviewUrl: string | null;
+  website: string | null;
+  phone: string | null;
+  logoUrl: string | null;
+  services: string[];
+  defaultLanguage: string;
+  status: 'active' | 'inactive';
+  socialLinks: Array<{ platform: SocialPlatform; url: string }>;
+  publicToken: string;
+  createdAt: string;
+  qrCount?: number;
+  campaignCount?: number;
+}
+
+export interface ReviewCampaign {
+  id: string;
+  name: string;
+  description: string | null;
+  status: 'active' | 'paused';
+  businessId: string;
+  business: { id: string; name: string };
+  qrCount: number;
+  createdAt: string;
+}
+
+export interface ReviewQr {
+  id: string;
+  label: string;
+  placement: string | null;
+  token: string;
+  url: string;
+  fgColor: string;
+  bgColor: string;
+  includeLogo: boolean;
+  status: string;
+  createdAt: string;
+  business: { id: string; name: string; hasLogo: boolean };
+  campaign: { id: string; name: string } | null;
+  scans: number;
+}
+
+// ── data hook ────────────────────────────────────────────────────────
+
+export function useApi<T>(path: string | null) {
+  const [data, setData] = useState<T | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(Boolean(path));
+  const reload = useCallback(async () => {
+    if (!path) return;
+    setLoading(true);
+    try {
+      setData((await api<T>(path)).data);
+      setError(null);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }, [path]);
+  useEffect(() => {
+    void reload();
+  }, [reload]);
+  return { data, error, loading, reload, setData };
+}
+
+// ── layout bits ──────────────────────────────────────────────────────
+
+/**
+ * The four everyday pages. Campaigns, automation jobs and settings are
+ * advanced tools reached from links inside these pages; they highlight the
+ * tab they belong to.
+ */
+export const REVIEW_TABS = [
+  { href: '/reviews', label: 'Overview', also: ['/reviews/jobs', '/reviews/settings'] },
+  { href: '/reviews/businesses', label: 'Businesses', also: [] },
+  { href: '/reviews/qr-codes', label: 'QR codes', also: ['/reviews/campaigns'] },
+  { href: '/reviews/analytics', label: 'Analytics', also: [] },
+];
+
+export const isReviewTabActive = (t: (typeof REVIEW_TABS)[number], pathname: string) =>
+  (t.href === '/reviews' ? pathname === '/reviews' : pathname.startsWith(t.href)) || t.also.some((a) => pathname.startsWith(a));
+
+export function ReviewTabs() {
+  const pathname = usePathname();
+  return (
+    <nav className="flex w-fit max-w-full gap-1 overflow-x-auto rounded-xl border border-border/70 bg-card p-1" aria-label="Reviews">
+      {REVIEW_TABS.map((t) => {
+        const active = isReviewTabActive(t, pathname);
+        return (
+          <Link key={t.href} href={t.href} aria-current={active ? 'page' : undefined} className={cn('whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors', active ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground')}>
+            {t.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+export function PageHead({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: ReactNode }) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+        {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+      </div>
+      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+    </div>
+  );
+}
+
+export function Card({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={cn('rounded-xl border border-border/70 bg-card', className)}>{children}</div>;
+}
+
+export function Stat({ label, value, hint, icon: Icon }: { label: string; value: ReactNode; hint?: string; icon?: React.ElementType }) {
+  return (
+    <div className="rounded-xl border border-border/70 bg-card px-3 py-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="truncate text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+        {Icon && <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary"><Icon className="size-3.5" /></span>}
+      </div>
+      <p className="mt-1 text-xl font-bold leading-tight tabular-nums">{value}</p>
+      {hint && <p className="text-[10px] text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
+
+/** Table styling shared by the review pages. */
+export const tableCls = 'w-full text-[13px]';
+export const theadCls = 'border-b border-border bg-muted/40 text-left text-[10px] font-semibold uppercase tracking-wider text-muted-foreground';
+
+export function Empty({ title, body, action }: { title: string; body?: string; action?: ReactNode }) {
+  return (
+    <div className="px-4 py-12 text-center">
+      <p className="text-sm font-medium">{title}</p>
+      {body && <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground">{body}</p>}
+      {action && <div className="mt-4 flex justify-center">{action}</div>}
+    </div>
+  );
+}
+
+export function ErrorPanel({ message, onRetry }: { message: string; onRetry?: () => void }) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3.5 py-2.5 text-xs text-destructive" role="alert">
+      <span>{message}</span>
+      {onRetry && <Button size="sm" variant="outline" className="h-7 text-xs" onClick={onRetry}>Try again</Button>}
+    </div>
+  );
+}
+
+export function Skeleton({ rows = 4 }: { rows?: number }) {
+  return (
+    <div className="space-y-2 p-3">
+      {Array.from({ length: rows }).map((_, i) => <div key={i} className="h-8 animate-pulse rounded-md bg-muted/70" />)}
+    </div>
+  );
+}
+
+export function Pill({ children, tone = 'muted' }: { children: ReactNode; tone?: 'muted' | 'green' | 'amber' | 'red' | 'sky' }) {
+  const cls = {
+    muted: 'bg-muted text-muted-foreground',
+    green: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
+    amber: 'bg-amber-500/10 text-amber-700 dark:text-amber-400',
+    red: 'bg-rose-500/10 text-rose-700 dark:text-rose-400',
+    sky: 'bg-sky-500/10 text-sky-700 dark:text-sky-400',
+  }[tone];
+  return <span className={cn('inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium', cls)}>{children}</span>;
+}
+
+/**
+ * Review-module dialog. Never taller than the screen: the header and the
+ * optional `footer` stay put and only the body scrolls.
+ */
+export function Modal({ title, subtitle, onClose, busy, children, wide, footer }: { title: string; subtitle?: string; onClose: () => void; busy?: boolean; children: ReactNode; wide?: boolean; footer?: ReactNode }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !busy) onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [busy, onClose]);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-4" role="dialog" aria-modal="true" aria-label={title} onMouseDown={(e) => { if (e.target === e.currentTarget && !busy) onClose(); }}>
+      <div className={cn('flex max-h-[calc(100dvh-1.5rem)] w-full flex-col overflow-hidden rounded-xl bg-popover shadow-2xl ring-1 ring-foreground/10 sm:max-h-[calc(100dvh-2rem)]', wide ? 'max-w-2xl' : 'max-w-md')}>
+        <div className="flex shrink-0 items-start justify-between gap-3 border-b border-border/70 px-5 py-3.5">
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold">{title}</h2>
+            {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
+          </div>
+          <Button size="icon-sm" variant="ghost" aria-label="Close" className="size-7" onClick={onClose} disabled={busy}><X className="size-4" /></Button>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
+        {footer && <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border/70 bg-muted/20 px-5 py-3">{footer}</div>}
+      </div>
+    </div>
+  );
+}
+
+export function Field({ label, children, hint, className }: { label: string; children: ReactNode; hint?: ReactNode; className?: string }) {
+  return (
+    <label className={cn('block space-y-1', className)}>
+      <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
+      {children}
+      {hint && <span className="block text-[10px] text-muted-foreground">{hint}</span>}
+    </label>
+  );
+}
+
+export const inputCls = 'h-8 text-[13px] md:text-[13px]';
+export const selectCls = 'h-8 w-full rounded-md border border-input bg-background px-2 text-[13px] outline-none focus-visible:ring-2 focus-visible:ring-ring/40';
+
+export function SmallInput(props: React.ComponentProps<typeof Input>) {
+  return <Input {...props} className={cn(inputCls, props.className)} />;
+}
+
+export function BusinessPicker({ value, onChange, allowAll = true, className }: { value: string; onChange: (id: string) => void; allowAll?: boolean; className?: string }) {
+  const { data } = useApi<ReviewBusiness[]>('/api/reviews/businesses');
+  return (
+    <select aria-label="Business" className={cn(selectCls, 'w-auto min-w-[180px]', className)} value={value} onChange={(e) => onChange(e.target.value)}>
+      {allowAll && <option value="">All businesses</option>}
+      {!allowAll && <option value="">Select a business…</option>}
+      {(data ?? []).map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+    </select>
+  );
+}
+
+export const fmtDate = (iso: string | null | undefined) => (iso ? new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—');
+export const fmtMs = (ms: number | null | undefined) => (ms == null ? '—' : ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(1)} s`);
+
+export async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Tiny dependency-free bar chart. */
+export function Bars({ rows, keys, height = 140 }: { rows: Array<Record<string, number | string>>; keys: Array<{ key: string; label: string; cls: string }>; height?: number }) {
+  if (!rows.length) return <p className="py-8 text-center text-xs text-muted-foreground">No activity in this period.</p>;
+  const max = Math.max(1, ...rows.flatMap((r) => keys.map((k) => Number(r[k.key]) || 0)));
+  return (
+    <div>
+      <div className="flex items-end gap-1 overflow-x-auto pb-1" style={{ height }}>
+        {rows.map((r) => (
+          <div key={String(r.period)} className="flex min-w-[18px] flex-1 items-end justify-center gap-px" title={`${r.period}: ${keys.map((k) => `${k.label} ${r[k.key]}`).join(', ')}`}>
+            {keys.map((k) => (
+              <div key={k.key} className={cn('w-full max-w-[10px] rounded-t-sm', k.cls)} style={{ height: `${Math.max(2, ((Number(r[k.key]) || 0) / max) * (height - 8))}px` }} />
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="mt-1 flex justify-between text-[10px] text-muted-foreground"><span>{String(rows[0].period)}</span><span>{String(rows[rows.length - 1].period)}</span></div>
+      <div className="mt-2 flex flex-wrap gap-3 text-[10px] text-muted-foreground">
+        {keys.map((k) => <span key={k.key} className="flex items-center gap-1"><span className={cn('size-2 rounded-sm', k.cls)} /> {k.label}</span>)}
+      </div>
+    </div>
+  );
+}
