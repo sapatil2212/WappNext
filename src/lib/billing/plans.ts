@@ -100,7 +100,7 @@ export const SELF_SERVE_PLANS = PLANS.filter((p) => p.selfServe);
 
 /** Billing support contacts (WhatsApp digits only). Payments themselves go through Razorpay. */
 export const BILLING_WHATSAPP = '917745868073';
-export const BILLING_EMAIL = 'chatnexgen@gmail.com';
+export const BILLING_EMAIL = 'contactwappnext@gmail.com';
 
 /** Plan by id. Also maps ids written by older versions of signup. */
 export function planById(id: string | null | undefined): BillingPlan | null {

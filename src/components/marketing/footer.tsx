@@ -27,6 +27,8 @@ export function Footer() {
     { name: "Privacy Policy", href: "/privacy-policy" },
     { name: "Terms & Conditions", href: "/terms-and-conditions" },
     { name: "Refund Policy", href: "/refund-policy" },
+    { name: "Shipping & Delivery", href: "/shipping-and-delivery" },
+    { name: "Cookie Policy", href: "/cookie-policy" },
   ];
 
   const logoSrc = isLight
@@ -38,14 +40,14 @@ export function Footer() {
       {/* Background radial highlight */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[150px] rounded-full bg-emerald-500/5 blur-3xl pointer-events-none" />
 
-      <div className="max-w-[1360px] mx-auto grid grid-cols-1 md:grid-cols-6 gap-10 md:gap-8 relative z-10">
+      <div className="max-w-[1360px] mx-auto grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-8 relative z-10">
         {/* Brand Column */}
         <div className="col-span-1 md:col-span-2 space-y-4">
           <Link href="/" className="inline-block">
             <img
               src={logoSrc}
               alt={branding.siteName || "WappNext Logo"}
-              className="h-8 w-auto object-contain"
+              className="h-12 sm:h-14 w-auto object-contain"
             />
           </Link>
           <p className="text-xs text-[var(--m-text-tertiary)] leading-relaxed max-w-sm">
@@ -101,17 +103,6 @@ export function Footer() {
           </ul>
         </div>
 
-        {/* Trust signals Column */}
-        <div className="col-span-1 space-y-4">
-          <h6 className="text-[10px] uppercase font-bold tracking-wider text-[var(--m-text-tertiary)]">Trust Signals</h6>
-          <ul className="space-y-2 text-[10px] text-[var(--m-text-muted)] font-semibold">
-            <li className="text-emerald-400">✓ Secure Platform</li>
-            <li className="text-emerald-400">✓ Data Encryption</li>
-            <li className="text-emerald-400">✓ Meta-Compliant</li>
-            <li className="text-emerald-400">✓ Role-Based Access</li>
-            <li className="text-emerald-400">✓ Business Support</li>
-          </ul>
-        </div>
       </div>
 
       {/* Meta API disclaimer & Copyright footer */}

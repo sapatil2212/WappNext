@@ -56,7 +56,7 @@ export async function getSmtpConfig(): Promise<SmtpConfig> {
     user,
     pass,
     fromName: "WappNext Support",
-    fromEmail: user || "support@chatnexgen.com",
+    fromEmail: user || "contactwappnext@gmail.com",
     bccEmail: bcc || null,
     secure: port === 465,
   };

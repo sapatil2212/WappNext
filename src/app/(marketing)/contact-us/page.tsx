@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ContactPhones } from "@/components/marketing/contact-phones";
 
 export default function ContactUsPage() {
   const [name, setName] = useState("");
@@ -75,8 +76,8 @@ export default function ContactUsPage() {
             <Mail className="size-4 text-emerald-400 shrink-0" />
             <div>
               <span className="block font-bold text-[var(--m-text-primary)]">Email Support</span>
-              <a href="mailto:support@chatnexgen.online" className="hover:text-emerald-400 transition-colors">
-                support@chatnexgen.online
+              <a href="mailto:contactwappnext@gmail.com" className="hover:text-emerald-400 transition-colors">
+                contactwappnext@gmail.com
               </a>
             </div>
           </div>
@@ -84,7 +85,7 @@ export default function ContactUsPage() {
             <Phone className="size-4 text-teal-400 shrink-0" />
             <div>
               <span className="block font-bold text-[var(--m-text-primary)]">Phone</span>
-              <span>+91 77458 68073 / +91 88305 53868</span>
+              <span><ContactPhones className="hover:text-emerald-400 transition-colors" /></span>
             </div>
           </div>
           <div className="flex items-center gap-3.5 text-xs text-[var(--m-text-tertiary)]">
@@ -192,7 +193,7 @@ export default function ContactUsPage() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="mt-2 h-10 w-full bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-bold text-xs shadow-[0_0_12px_rgba(16,185,129,0.2)] disabled:opacity-60"
+                  className="mt-2 h-10 w-full bg-[#047857] !text-white hover:bg-[#065f46] font-bold text-xs shadow-[0_0_12px_rgba(16,185,129,0.2)] disabled:opacity-60"
                 >
                   {loading ? "Submitting..." : "Submit Inquiry"}
                 </Button>

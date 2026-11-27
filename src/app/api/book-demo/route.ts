@@ -10,14 +10,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const superAdmin = process.env.SUPER_ADMIN_USERNAME || "chatnexgen@gmail.com";
+    const superAdmin = process.env.SUPER_ADMIN_USERNAME || "contactwappnext@gmail.com";
 
     // Setup SMTP Transporter
     const smtpHost = process.env.SMTP_HOST;
     const smtpPort = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587;
     const smtpUser = process.env.SMTP_USER;
     const smtpPass = process.env.SMTP_PASS;
-    const smtpFrom = process.env.SMTP_FROM || smtpUser || "chatnexgen@gmail.com";
+    const smtpFrom = process.env.SMTP_FROM || smtpUser || "contactwappnext@gmail.com";
 
     // Developer Fallback: Log demo booking details to terminal console
     console.log(`

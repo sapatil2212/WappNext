@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Trash2 } from "lucide-react";
+import { ContactPhones } from "@/components/marketing/contact-phones";
 
 export default function DataDeletionPage() {
   return (
@@ -41,15 +42,15 @@ export default function DataDeletionPage() {
             <div className="bg-[var(--m-bg-secondary)] border border-[var(--m-border-primary)] rounded-xl p-4 text-center space-y-2">
               <span className="text-[10px] uppercase font-bold text-[var(--m-text-muted)]">Support Email</span>
               <p className="font-semibold text-[var(--m-text-primary)]">
-                <a href="mailto:support@chatnexgen.online" className="text-emerald-400 hover:underline">
-                  support@chatnexgen.online
+                <a href="mailto:contactwappnext@gmail.com" className="text-emerald-400 hover:underline">
+                  contactwappnext@gmail.com
                 </a>
               </p>
             </div>
             <div className="bg-[var(--m-bg-secondary)] border border-[var(--m-border-primary)] rounded-xl p-4 text-center space-y-2">
-              <span className="text-[10px] uppercase font-bold text-[var(--m-text-muted)]">WhatsApp Support</span>
+              <span className="text-[10px] uppercase font-bold text-[var(--m-text-muted)]">Phone Support</span>
               <p className="font-semibold text-emerald-400">
-                +91 77458 68073 / +91 88305 53868
+                <ContactPhones />
               </p>
             </div>
           </div>

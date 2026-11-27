@@ -2,20 +2,21 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Check, Eye, ImagePlus, Loader2, LogOut, MousePointerClick, Pencil, Plus, Sparkles, Trash2, X } from "lucide-react";
+import { Check, Eye, ImagePlus, Loader2, LogOut, Megaphone, MousePointerClick, Pencil, Plus, Sparkles, Trash2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { OfferModal } from "@/components/marketing/offer-popups";
+import { OfferBarView } from "@/components/marketing/offer-bar";
 import { api } from "@/lib/campaigns/api";
 import { AdminModal, Field, fmtDate, fromLocalInput, inputCls, Pill, selectCls, toLocalInput, useAdminApi } from "./shared";
 import type { PromoRow } from "./promo-tab";
 
 export interface OfferRow {
   id: string;
-  kind: "welcome" | "exit_intent";
+  kind: "welcome" | "exit_intent" | "top_banner";
   title: string;
   body: string | null;
   imageUrl: string | null;
@@ -37,7 +38,10 @@ export interface OfferRow {
 const KIND = {
   welcome: { label: "Welcome pop-up", hint: "Opens a few seconds after a visitor lands on the home page.", icon: Sparkles },
   exit_intent: { label: "Exit pop-up", hint: "Opens when a visitor is about to leave the home page.", icon: LogOut },
+  top_banner: { label: "Top banner", hint: "A strip above the home-page hero with your offer and promo code.", icon: Megaphone },
 } as const;
+/** List label: the headline, or a fallback for pop-ups without one. */
+const offerName = (o: Pick<OfferRow, "title" | "imageUrl">) => o.title?.trim() || (o.imageUrl ? "Image pop-up" : "Untitled pop-up");
 const FREQ = { session: "Once per visit", day: "Once a day", week: "Once a week", always: "Every visit" } as const;
 
 function liveState(o: OfferRow) {
@@ -72,7 +76,7 @@ export function PopupsTab() {
   return (
     <div className="space-y-4">
       {error && <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-[12px] text-destructive">{error}</p>}
-      {(["welcome", "exit_intent"] as const).map((kind) => {
+      {(["top_banner", "welcome", "exit_intent"] as const).map((kind) => {
         const K = KIND[kind];
         const rows = (data ?? []).filter((o) => o.kind === kind);
         return (
@@ -98,14 +102,16 @@ export function PopupsTab() {
                   const ctr = o.views ? Math.round((o.clicks / o.views) * 100) : 0;
                   return (
                     <li key={o.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                      {o.imageUrl ? (
+                      {o.kind === "top_banner" ? (
+                        <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-[#047857] !text-white"><Megaphone className="size-4" /></span>
+                      ) : o.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={o.imageUrl} alt="" className="size-12 shrink-0 rounded-lg border border-border object-cover" />
                       ) : (
                         <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground"><ImagePlus className="size-4" /></span>
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className="flex items-center gap-2 truncate text-[13px] font-medium"><span className="truncate">{o.title}</span><Pill tone={st.tone}>{st.text}</Pill></p>
+                        <p className="flex items-center gap-2 truncate text-[13px] font-medium"><span className="truncate">{offerName(o)}</span><Pill tone={st.tone}>{st.text}</Pill></p>
                         <p className="truncate text-[11px] text-muted-foreground">
                           {FREQ[o.frequency]}{kind === "welcome" ? ` · after ${o.delaySeconds}s` : ""}{o.promoCode ? ` · code ${o.promoCode.code}` : ""}{o.endsAt ? ` · until ${fmtDate(o.endsAt)}` : ""}
                         </p>
@@ -131,7 +137,15 @@ export function PopupsTab() {
       })}
 
       {editing && <OfferForm initial={"id" in editing ? editing : null} kind={editing.kind} promos={promos.data ?? []} onClose={() => setEditing(null)} onSaved={async () => { setEditing(null); await reload(); }} />}
-      {preview && (
+      {preview && preview.kind === "top_banner" && (
+        <div className="fixed inset-0 z-[310] flex items-start justify-center bg-black/50 p-4 pt-16" onMouseDown={(e) => e.target === e.currentTarget && setPreview(null)}>
+          <div className="w-full max-w-5xl overflow-hidden rounded-xl bg-white shadow-2xl">
+            <OfferBarView preview offer={{ ...preview, promoCode: preview.promoCode?.code ?? null }} onClose={() => setPreview(null)} />
+            <div className="flex h-16 items-center justify-between px-5 text-[11px] text-slate-400"><span>Navbar</span><span>Shown above the home-page hero</span></div>
+          </div>
+        </div>
+      )}
+      {preview && preview.kind !== "top_banner" && (
         <div className="fixed inset-0 z-[310]">
           <OfferModal preview offer={{ ...preview, promoCode: preview.promoCode?.code ?? null }} onClose={() => setPreview(null)} />
         </div>
@@ -141,7 +155,7 @@ export function PopupsTab() {
         onOpenChange={(o) => !o && setDeleting(null)}
         title="Delete this pop-up?"
         description="It is removed from the home page along with its view and click counts."
-        details={deleting ? <span className="font-medium">{deleting.title}</span> : null}
+        details={deleting ? <span className="font-medium">{offerName(deleting)}</span> : null}
         confirmText="Delete"
         variant="destructive"
         onConfirm={async () => {
@@ -163,11 +177,11 @@ export function PopupsTab() {
 
 function OfferForm({ initial, kind, promos, onClose, onSaved }: { initial: OfferRow | null; kind: OfferRow["kind"]; promos: PromoRow[]; onClose: () => void; onSaved: () => Promise<void> }) {
   const [f, setF] = useState({
-    title: initial?.title ?? (kind === "welcome" ? "Get 20% off your first month" : "Leaving already? Here's 20% off"),
+    title: initial?.title ?? "",
     body: initial?.body ?? "",
     imageUrl: initial?.imageUrl ?? null as string | null,
-    ctaLabel: initial?.ctaLabel ?? "Claim offer",
-    ctaUrl: initial?.ctaUrl ?? "/signup",
+    ctaLabel: initial?.ctaLabel ?? "",
+    ctaUrl: initial?.ctaUrl ?? "",
     promoCodeId: initial?.promoCodeId ?? "",
     delaySeconds: String(initial?.delaySeconds ?? 3),
     frequency: initial?.frequency ?? "session",
@@ -177,6 +191,7 @@ function OfferForm({ initial, kind, promos, onClose, onSaved }: { initial: Offer
   });
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const banner = kind === "top_banner";
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
   const promo = promos.find((p) => p.id === f.promoCodeId);
 
@@ -190,12 +205,13 @@ function OfferForm({ initial, kind, promos, onClose, onSaved }: { initial: Offer
   };
 
   const save = async () => {
-    if (f.title.trim().length < 2) return toast.error("Add a headline.");
+    if (banner && !f.title.trim() && !f.body.trim() && !f.promoCodeId) return toast.error("Add the banner text or pick a promo code.");
+    if (!f.title.trim() && !f.body.trim() && !f.imageUrl && !f.ctaLabel.trim() && !f.promoCodeId) return toast.error("Add something to show: a headline, message, image, button or promo code.");
     setSaving(true);
     try {
       const json = {
         kind,
-        title: f.title.trim(),
+        title: f.title.trim() || null,
         body: f.body.trim() || null,
         imageUrl: f.imageUrl,
         ctaLabel: f.ctaLabel.trim() || null,
@@ -234,9 +250,13 @@ function OfferForm({ initial, kind, promos, onClose, onSaved }: { initial: Offer
       }
     >
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="Headline *" className="sm:col-span-2"><Input className={inputCls} value={f.title} onChange={set("title")} maxLength={160} autoFocus /></Field>
-        <Field label="Message" className="sm:col-span-2"><Textarea rows={3} className="text-[13px] md:text-[13px]" value={f.body} onChange={set("body")} maxLength={1000} placeholder="Start automating WhatsApp today. Offer valid till Sunday." /></Field>
-        <div className="space-y-1 sm:col-span-2">
+        <Field label={banner ? "Banner text" : "Headline"} className="sm:col-span-2"><Input className={inputCls} value={f.title} onChange={set("title")} maxLength={160} autoFocus placeholder={banner ? "Launch offer: 20% off your first month" : kind === "welcome" ? "Get 20% off your first month" : "Leaving already? Here's 20% off"} /></Field>
+        {banner ? (
+          <Field label="Extra text" hint="Optional. Shown after the banner text on larger screens." className="sm:col-span-2"><Input className={inputCls} value={f.body} onChange={set("body")} maxLength={160} placeholder="Offer ends Sunday." /></Field>
+        ) : (
+          <Field label="Message" className="sm:col-span-2"><Textarea rows={3} className="text-[13px] md:text-[13px]" value={f.body} onChange={set("body")} maxLength={1000} placeholder="Start automating WhatsApp today. Offer valid till Sunday." /></Field>
+        )}
+        {!banner && <div className="space-y-1 sm:col-span-2">
           <span className="text-[12px] font-medium">Image</span>
           <div className="flex items-center gap-3 rounded-lg border border-dashed border-border p-2.5">
             {f.imageUrl ? (
@@ -245,35 +265,43 @@ function OfferForm({ initial, kind, promos, onClose, onSaved }: { initial: Offer
             ) : (
               <span className="grid h-14 w-24 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground"><ImagePlus className="size-4" /></span>
             )}
-            <p className="min-w-0 flex-1 text-[11px] text-muted-foreground">Banner shown at the top of the pop-up. PNG, JPEG, WebP or GIF, up to 1 MB. Wide images (about 16:9) look best.</p>
+            <p className="min-w-0 flex-1 text-[11px] text-muted-foreground">Optional. Shown at the top of the pop-up, or on its own if nothing else is filled in. PNG, JPEG, WebP or GIF, up to 1 MB. Wide images (about 16:9) look best.</p>
             <label className="inline-flex h-7 shrink-0 cursor-pointer items-center rounded-md border border-border px-2.5 text-xs font-medium hover:bg-muted">
               {f.imageUrl ? "Replace" : "Upload"}
               <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" className="sr-only" onChange={(e) => { onImage(e.target.files?.[0]); e.target.value = ""; }} />
             </label>
             {f.imageUrl && <Button type="button" size="sm" variant="ghost" className="h-7 text-xs text-destructive hover:text-destructive" onClick={() => setF({ ...f, imageUrl: null })}>Remove</Button>}
           </div>
-        </div>
-        <Field label="Button text"><Input className={inputCls} value={f.ctaLabel} onChange={set("ctaLabel")} maxLength={60} /></Field>
-        <Field label="Button link" hint="A page here (like /signup or /pricing) or an https link."><Input className={inputCls} value={f.ctaUrl} onChange={set("ctaUrl")} maxLength={500} /></Field>
+        </div>}
+        <Field label="Button text" hint="Leave empty to hide the button."><Input className={inputCls} value={f.ctaLabel} onChange={set("ctaLabel")} maxLength={60} placeholder="Claim offer" /></Field>
+        <Field label="Button link" hint={banner ? "A page here (like /signup or /pricing) or an https link. With no button text, the banner text becomes the link." : "A page here (like /signup or /pricing) or an https link. The image also opens this link."}><Input className={inputCls} value={f.ctaUrl} onChange={set("ctaUrl")} maxLength={500} placeholder="/signup" /></Field>
         <Field label="Promo code to show" hint={promo ? `${promo.label}. Linking to /signup applies it automatically.` : "Optional. Visitors can copy it with one tap."}>
           <select className={selectCls} value={f.promoCodeId} onChange={set("promoCodeId")}>
             <option value="">No promo code</option>
             {promos.map((p) => <option key={p.id} value={p.id} disabled={p.state !== "active" && p.id !== f.promoCodeId}>{p.code} · {p.label}{p.state !== "active" ? ` (${p.state.replace("_", " ")})` : ""}</option>)}
           </select>
         </Field>
-        <Field label="How often">
+        <Field label="How often" hint={banner ? "After a visitor closes it, it stays hidden for this long." : undefined}>
           <select className={selectCls} value={f.frequency} onChange={set("frequency")}>
             {Object.entries(FREQ).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
         </Field>
-        {kind === "welcome" && <Field label="Open after (seconds)"><Input className={inputCls} inputMode="numeric" value={f.delaySeconds} onChange={(e) => setF({ ...f, delaySeconds: e.target.value.replace(/\D/g, "").slice(0, 3) })} /></Field>}
+        {kind === "welcome" && <Field label="Open after (seconds)" hint="Leave empty to open straight away."><Input className={inputCls} inputMode="numeric" placeholder="0" value={f.delaySeconds} onChange={(e) => setF({ ...f, delaySeconds: e.target.value.replace(/\D/g, "").slice(0, 3) })} /></Field>}
         <Field label="Starts" hint="Leave empty to start now."><Input type="datetime-local" className={inputCls} value={f.startsAt} onChange={set("startsAt")} /></Field>
         <Field label="Ends" hint="Leave empty to run until turned off."><Input type="datetime-local" className={inputCls} value={f.endsAt} onChange={set("endsAt")} /></Field>
       </div>
 
-      {showPreview && (
+      {showPreview && banner && (
+        <div className="fixed inset-0 z-[310] flex items-start justify-center bg-black/50 p-4 pt-16" onMouseDown={(e) => e.target === e.currentTarget && setShowPreview(false)}>
+          <div className="w-full max-w-5xl overflow-hidden rounded-xl bg-white shadow-2xl">
+            <OfferBarView preview offer={{ id: "preview", title: f.title, body: f.body || null, ctaLabel: f.ctaLabel || null, ctaUrl: f.ctaUrl || null, promoCode: promo?.code ?? null }} onClose={() => setShowPreview(false)} />
+            <div className="flex h-16 items-center justify-between px-5 text-[11px] text-slate-400"><span>Navbar</span><span>Shown above the home-page hero</span></div>
+          </div>
+        </div>
+      )}
+      {showPreview && !banner && (
         <div className="fixed inset-0 z-[310]">
-          <OfferModal preview offer={{ id: "preview", kind, title: f.title || "Headline", body: f.body || null, imageUrl: f.imageUrl, ctaLabel: f.ctaLabel || null, ctaUrl: f.ctaUrl || null, promoCode: promo?.code ?? null }} onClose={() => setShowPreview(false)} />
+          <OfferModal preview offer={{ id: "preview", kind, title: f.title, body: f.body || null, imageUrl: f.imageUrl, ctaLabel: f.ctaLabel || null, ctaUrl: f.ctaUrl || null, promoCode: promo?.code ?? null }} onClose={() => setShowPreview(false)} />
         </div>
       )}
     </AdminModal>

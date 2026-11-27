@@ -47,7 +47,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Use static default initial values during server rendering & initial hydration
   // to guarantee 100% server-client HTML consistency and prevent hydration crashes.
   const [theme, setThemeState] = useState<ThemeId>(DEFAULT_THEME);
-  const [mode, setModeState] = useState<ThemeMode>("dark");
+  const [mode, setModeState] = useState<ThemeMode>("light");
 
   // Read saved client settings and synchronize state safely after hydration completes
   useEffect(() => {
@@ -82,7 +82,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             document.documentElement.classList.add("dark");
           }
         } else {
-          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("dark");
         }
       }
     } catch {

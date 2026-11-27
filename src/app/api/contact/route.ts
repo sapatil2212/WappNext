@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
     }
 
-    const superAdmin = process.env.SUPER_ADMIN_USERNAME || "support@chatnexgen.online";
+    const superAdmin = process.env.SUPER_ADMIN_USERNAME || "contactwappnext@gmail.com";
 
     console.log(`
 === [NEW CONTACT INQUIRY RECEIVED] ===
@@ -28,7 +28,7 @@ Target:  Brightwave Digital Products LLP (${superAdmin})
     const smtpPort = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587;
     const smtpUser = process.env.SMTP_USER;
     const smtpPass = process.env.SMTP_PASS;
-    const smtpFrom = process.env.SMTP_FROM || smtpUser || "support@chatnexgen.online";
+    const smtpFrom = process.env.SMTP_FROM || smtpUser || "contactwappnext@gmail.com";
 
     if (smtpHost && smtpUser && smtpPass) {
       const transporter = nodemailer.createTransport({

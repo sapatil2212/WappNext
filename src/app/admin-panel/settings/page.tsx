@@ -14,7 +14,7 @@ export default function AdminSettingsPage() {
     adminEmail: "admin@agency.com",
     adminPassword: "",
     agencyName: "WappNext Technologies",
-    supportEmail: "chatnexgen@gmail.com",
+    supportEmail: "contactwappnext@gmail.com",
     notifyNewClient: true,
     notifyChurn: true,
     notifyTrial: false,

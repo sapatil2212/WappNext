@@ -149,7 +149,7 @@ function LoginPageInner() {
             <AuthNotice tone="error">
               {error}
               {expired && (
-                <button type="button" onClick={() => setShowRenewal(true)} className="mt-2 flex h-8 w-full items-center justify-center gap-1.5 rounded-md bg-emerald-500 text-[12px] font-semibold text-slate-950 hover:bg-emerald-400">
+                <button type="button" onClick={() => setShowRenewal(true)} className="mt-2 flex h-8 w-full items-center justify-center gap-1.5 rounded-md bg-[#047857] text-[12px] font-semibold !text-white hover:bg-[#065f46]">
                   <CreditCard className="size-3.5" /> Renew subscription
                 </button>
               )}

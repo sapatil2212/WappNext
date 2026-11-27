@@ -19,7 +19,7 @@
 const LOGO_URL =
   process.env.EMAIL_LOGO_URL ||
   "https://chatnexgen.online/images/logo/wappnext-logo.png";
-const SUPPORT_EMAIL = "chatnexgen@gmail.com";
+const SUPPORT_EMAIL = "contactwappnext@gmail.com";
 
 // ─── Design tokens ──────────────────────────────────────────────────────────
 const C = {

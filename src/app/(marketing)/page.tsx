@@ -1,17 +1,62 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Bot, Check, ChevronDown, Landmark } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Landmark } from "lucide-react";
 import { PLANS } from "@/lib/billing/plans";
 import { InteractiveHero } from "@/components/marketing/interactive-hero";
 import { OfferPopups } from "@/components/marketing/offer-popups";
 import { SpotlightCard } from "@/components/marketing/spotlight-card";
 import { MagneticButton } from "@/components/marketing/magnetic-button";
-import { AIChatSimulation } from "@/components/marketing/ai-chat-simulation";
+import { AiSupportSection } from "@/components/marketing/ai-support-section";
 
-import { SocialProofMetrics } from "@/components/marketing/social-proof-metrics";
 import { BookDemoTrigger } from "@/components/marketing/book-demo-trigger";
 import { WhatWeDoSection } from "@/components/marketing/what-we-do-section";
 import { WhatsAppStats } from "@/components/marketing/whatsapp-stats";
+import { QrStandeeShowcase } from "@/components/marketing/qr-standee-showcase";
+import { BroadcastSection } from "@/components/marketing/broadcast-section";
+import { DEFAULT_DESCRIPTION, DEFAULT_TITLE, OG_IMAGE, SITE_NAME, SITE_URL, jsonLd, pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata({
+  title: DEFAULT_TITLE,
+  absoluteTitle: true,
+  description: DEFAULT_DESCRIPTION,
+  path: "/",
+  keywords: ["best WhatsApp marketing software", "WhatsApp bulk message sender", "WhatsApp API provider India"],
+});
+
+/** Software listing for Google, built from the real plans and features. */
+const softwareJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": `${SITE_URL}/#software`,
+  name: SITE_NAME,
+  url: SITE_URL,
+  image: `${SITE_URL}${OG_IMAGE.url}`,
+  description: DEFAULT_DESCRIPTION,
+  applicationCategory: "BusinessApplication",
+  applicationSubCategory: "WhatsApp Marketing Software",
+  operatingSystem: "Web",
+  publisher: { "@id": `${SITE_URL}/#organization` },
+  featureList: [
+    "Official WhatsApp Business API (Meta Cloud API)",
+    "Bulk WhatsApp broadcast campaigns with personalization",
+    "AI chatbot and automated replies",
+    "Shared team inbox",
+    "WhatsApp CRM and sales pipelines",
+    "Drip sequences and follow-ups",
+    "Click-to-WhatsApp ads",
+    "Real-time campaign analytics",
+    "API and webhooks",
+  ],
+  offers: PLANS.filter((p) => p.pricePaise).map((p) => ({
+    "@type": "Offer",
+    name: p.name,
+    description: p.description,
+    price: (p.pricePaise! / 100).toFixed(2),
+    priceCurrency: "INR",
+    url: `${SITE_URL}/pricing`,
+    availability: "https://schema.org/InStock",
+  })),
+};
 
 interface FAQItem {
   q: string;
@@ -80,11 +125,12 @@ export default function HomePage() {
   }));
   return (
     <div className="w-full flex flex-col overflow-hidden">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(softwareJsonLd) }} />
       {/* FAQ Schema Injector */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: jsonLd({
             "@context": "https://schema.org",
             "@type": "FAQPage",
             "mainEntity": faqs.map((faq) => ({
@@ -109,146 +155,14 @@ export default function HomePage() {
       {/* 2b. WHY WHATSAPP STATS */}
       <WhatsAppStats />
 
-      {/* 3. HOW IT WORKS SECTION */}
-      <section className="box-content py-24 px-8 sm:px-20 lg:px-32 max-w-[1360px] mx-auto space-y-16 relative">
-        <div
-          className="text-center max-w-3xl mx-auto space-y-4"
-        >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[var(--m-text-heading)] transition-colors duration-300">
-            How it works
-          </h2>
-          <p className="text-sm text-[var(--m-text-tertiary)] transition-colors duration-300">
-            Link and operate your official WhatsApp automation setup in minutes.
-          </p>
-        </div>
+      {/* 3. BROADCAST */}
+      <BroadcastSection />
 
-        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
-          {/* Connecting Line */}
-          <div
-            className="absolute top-[20px] left-[20px] w-[calc(66.666%)] h-[1px] bg-emerald-500/20 hidden md:block z-0 origin-left"
-          />
+      {/* 4. AI CUSTOMER SUPPORT */}
+      <AiSupportSection />
 
-          {/* Step 1 */}
-          <div
-            className="relative flex flex-col items-center md:items-start text-center md:text-left z-10 group"
-          >
-            <div className="w-10 h-10 rounded-lg border border-emerald-500/30 bg-[var(--m-bg-primary)] flex items-center justify-center text-xs font-semibold text-emerald-400 mb-6 shadow-md shadow-emerald-500/5 group-hover:border-emerald-500 group-hover:text-emerald-300 transition-all duration-300">
-              01
-            </div>
-            <div className="max-w-xs space-y-3">
-              <h3 className="text-base md:text-lg font-semibold text-[var(--m-text-heading)] leading-snug transition-colors duration-300">
-                Connect and Verify — Official Meta API
-              </h3>
-              <p className="text-xs md:text-sm text-[var(--m-text-tertiary)] leading-relaxed transition-colors duration-300">
-                Connect your business phone number via official Meta processes. Our compliance guidelines make setup straightforward, preparing you for immediate customer support.
-              </p>
-            </div>
-          </div>
-
-          {/* Step 2 */}
-          <div
-            className="relative flex flex-col items-center md:items-start text-center md:text-left z-10 group"
-          >
-            <div className="w-10 h-10 rounded-lg border border-emerald-500/30 bg-[var(--m-bg-primary)] flex items-center justify-center text-xs font-semibold text-emerald-400 mb-6 shadow-md shadow-emerald-500/5 group-hover:border-emerald-500 group-hover:text-emerald-300 transition-all duration-300">
-              02
-            </div>
-            <div className="max-w-xs space-y-3">
-              <h3 className="text-base md:text-lg font-semibold text-[var(--m-text-heading)] leading-snug transition-colors duration-300">
-                AI Customer Support on Autopilot
-              </h3>
-              <p className="text-xs md:text-sm text-[var(--m-text-tertiary)] leading-relaxed transition-colors duration-300">
-                Customer engagement campaigns reach opted-in contacts seamlessly. Automated replies run in the background according to Meta guidelines, resolving inquiries 24/7.
-              </p>
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div
-            className="relative flex flex-col items-center md:items-start text-center md:text-left z-10 group"
-          >
-            <div className="w-10 h-10 rounded-lg border border-emerald-500/30 bg-[var(--m-bg-primary)] flex items-center justify-center text-xs font-semibold text-emerald-400 mb-6 shadow-md shadow-emerald-500/5 group-hover:border-emerald-500 group-hover:text-emerald-300 transition-all duration-300">
-              03
-            </div>
-            <div className="max-w-xs space-y-3">
-              <h3 className="text-base md:text-lg font-semibold text-[var(--m-text-heading)] leading-snug transition-colors duration-300">
-                Track Leads in Shared CRM Pipeline
-              </h3>
-              <p className="text-xs md:text-sm text-[var(--m-text-tertiary)] leading-relaxed transition-colors duration-300">
-                Monitor open rates, query resolutions, and appointments. Assign leads to human agents and check conversation histories on a secure, visual interface.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. AI CHAT EXPERIENCE STORY */}
-      <section className="py-24 px-8 sm:px-20 lg:px-32 relative">
-        <div className="max-w-[1360px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div className="space-y-6">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wide">
-            <Bot className="size-4" /> Smart Customer Support
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight text-[var(--m-text-heading)] transition-colors duration-300">
-            An AI Assistant that Resolves Queries 24/7.
-          </h2>
-          <p className="text-sm leading-relaxed text-[var(--m-text-tertiary)] transition-colors duration-300">
-            Our AI customer support assistant reads inbound messages, recognizes user intent, responds using your custom knowledge base, and assigns tags to route high-value leads to proper team queues.
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            <div className="flex gap-2">
-              <span className="text-emerald-400 font-bold font-mono">✓</span>
-              <div>
-                <h4 className="text-xs font-semibold text-[var(--m-text-secondary)] transition-colors duration-300">
-                  Secure Data Controls
-                </h4>
-                <p className="text-[11px] mt-0.5 text-[var(--m-text-tertiary)] transition-colors duration-300">
-                  Fully encrypted storage systems protecting lead data.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <span className="text-emerald-400 font-semibold font-mono">✓</span>
-              <div>
-                <h4 className="text-xs font-semibold text-[var(--m-text-secondary)] transition-colors duration-300">
-                  Instant Booking Sync
-                </h4>
-                <p className="text-[11px] mt-0.5 text-[var(--m-text-tertiary)] transition-colors duration-300">
-                  Allows clients to check slots and reserve meetings on WhatsApp.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* WhatsApp Chat simulation visual component */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-emerald-500/5 blur-[90px] pointer-events-none" />
-          <AIChatSimulation />
-        </div>
-        </div>
-      </section>
-
-      {/* 5. SOCIAL PROOF / METRICS */}
-      <section className="py-24 px-8 sm:px-20 lg:px-32 border-y border-[var(--m-border-primary)] bg-[var(--m-bg-secondary)]/10 transition-colors duration-300 relative">
-        <div className="max-w-[1360px] mx-auto space-y-12 relative z-10">
-          <div
-            className="text-center max-w-3xl mx-auto space-y-4"
-          >
-            <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-emerald-500/25 bg-emerald-950/20 text-emerald-400 text-[11px] font-semibold tracking-wide uppercase">
-              ✨ Platform Standards
-            </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[var(--m-text-heading)] transition-colors duration-300">
-              Engineered for High Reliability
-            </h2>
-            <p className="text-sm text-[var(--m-text-tertiary)] max-w-xl mx-auto transition-colors duration-300">
-              Built on official Meta WhatsApp Cloud API webhooks with strict data isolation for every tenant.
-            </p>
-          </div>
-
-          <SocialProofMetrics />
-        </div>
-      </section>
+      {/* 5. QR CODES AND STANDEES */}
+      <QrStandeeShowcase />
 
       {/* 6. TESTIMONIALS SECTION */}
       <section className="py-24 max-w-full overflow-hidden space-y-12 relative">
@@ -343,7 +257,7 @@ export default function HomePage() {
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--m-text-muted)]">{plan.name}</span>
                     {plan.primary && (
-                      <span className="bg-emerald-500 text-slate-950 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full tracking-wider">
+                      <span className="bg-[#047857] !text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded-full tracking-wider">
                         Recommended
                       </span>
                     )}
@@ -375,7 +289,7 @@ export default function HomePage() {
                     href={plan.link || "/pricing"}
                     className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ease-out text-center flex items-center justify-center gap-1.5 ${
                       plan.primary
-                        ? "bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                        ? "bg-[#047857] !text-white hover:bg-[#065f46] shadow-[0_0_12px_rgba(16,185,129,0.2)]"
                         : "bg-[var(--m-bg-secondary)] border border-[var(--m-border-primary)] text-[var(--m-text-secondary)] hover:bg-[var(--m-bg-tertiary)]"
                     }`}
                   >
@@ -433,7 +347,7 @@ export default function HomePage() {
             <MagneticButton>
               <Link
                 href="/login"
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-3 rounded-xl text-xs font-semibold transition-all duration-300 ease-out shadow-[0_0_16px_rgba(16,185,129,0.2)] hover:shadow-[0_0_24px_rgba(16,185,129,0.4)] flex items-center gap-1.5"
+                className="bg-[#047857] hover:bg-[#065f46] !text-white px-6 py-3 rounded-xl text-xs font-semibold transition-all duration-300 ease-out shadow-[0_0_16px_rgba(16,185,129,0.2)] hover:shadow-[0_0_24px_rgba(16,185,129,0.4)] flex items-center gap-1.5"
               >
                 Start Free Trial <ArrowRight className="size-3.5" />
               </Link>

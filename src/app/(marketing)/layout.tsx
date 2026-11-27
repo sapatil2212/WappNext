@@ -13,7 +13,7 @@ export default function MarketingLayout({
     <MarketingThemeProvider>
       <AuroraBackground showRadialGlows={true}>
         <GlassNavbar />
-        <main className="flex-1 w-full flex flex-col pt-16">
+        <main className="flex-1 w-full flex flex-col pt-[calc(5rem+var(--offer-bar-h,0px))]">
           {children}
         </main>
         <Footer />

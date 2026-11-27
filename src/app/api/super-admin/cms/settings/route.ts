@@ -37,8 +37,8 @@ const DEFAULT_FOOTER = {
 };
 
 const DEFAULT_CONTACT = {
-  supportEmail: "chatnexgen@gmail.com",
-  salesEmail: "sales@chatnexgen.com",
+  supportEmail: "contactwappnext@gmail.com",
+  salesEmail: "contactwappnext@gmail.com",
   phone: "+91 9168 08 1355",
   address: "Pune, Maharashtra, India",
   businessHours: "Monday - Saturday, 9:00 AM - 6:00 PM IST",

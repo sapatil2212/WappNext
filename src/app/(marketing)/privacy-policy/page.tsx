@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { ContactPhones } from "@/components/marketing/contact-phones";
 import { Shield } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
@@ -104,7 +105,10 @@ export default function PrivacyPolicyPage() {
             <p>Compliance &amp; Data Privacy Department</p>
             <p>Pune, Maharashtra, India</p>
             <p>
-              Email: <a href="mailto:support@chatnexgen.online" className="text-emerald-400 hover:underline">support@chatnexgen.online</a>
+              Email: <a href="mailto:contactwappnext@gmail.com" className="text-emerald-400 hover:underline">contactwappnext@gmail.com</a>
+            </p>
+            <p>
+              Phone: <ContactPhones />
             </p>
           </div>
         </section>

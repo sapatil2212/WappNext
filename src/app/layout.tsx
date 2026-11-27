@@ -4,6 +4,16 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { DEFAULT_THEME, STORAGE_KEY, THEME_IDS } from "@/lib/themes";
+import { CONTACT_PHONES } from "@/components/marketing/contact-phones";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  DEFAULT_TITLE,
+  OG_IMAGE,
+  SITE_NAME,
+  SITE_URL,
+  jsonLd,
+} from "@/lib/seo";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -11,39 +21,47 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "WappNext - AI Powered WhatsApp CRM & Automation Platform",
-    template: "%s — WappNext",
+    default: DEFAULT_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: "Manage leads, automate customer communication, and grow your business with WappNext's AI-powered WhatsApp CRM platform.",
+  description: DEFAULT_DESCRIPTION,
+  keywords: DEFAULT_KEYWORDS,
+  applicationName: SITE_NAME,
+  category: "Business Software",
+  authors: [{ name: "Brightwave Digital Products LLP", url: SITE_URL }],
+  creator: "Brightwave Digital Products LLP",
+  publisher: "Brightwave Digital Products LLP",
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   openGraph: {
-    title: "WappNext - AI Powered WhatsApp CRM & Automation Platform",
-    description: "Manage leads, automate customer communication, and grow your business with WappNext's AI-powered WhatsApp CRM platform.",
-    url: "https://chatnexgen.online",
-    siteName: "WappNext",
-    images: [
-      {
-        url: "https://chatnexgen.online/images/logo/wappnext-logo.png",
-        width: 1200,
-        height: 630,
-        alt: "WappNext CRM Logo",
-      },
-    ],
-    locale: "en_US",
     type: "website",
+    url: "/",
+    siteName: SITE_NAME,
+    locale: "en_IN",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: "WappNext - AI Powered WhatsApp CRM & Automation Platform",
-    description: "Manage leads, automate customer communication, and grow your business with WappNext's AI-powered WhatsApp CRM platform.",
-    images: ["https://chatnexgen.online/images/logo/wappnext-logo.png"],
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
   icons: {
     icon: [{ url: "/favicon.png", type: "image/png" }],
+    apple: [{ url: "/favicon.png", type: "image/png" }],
   },
   formatDetection: {
     email: false,
@@ -53,8 +71,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#020617",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#020617" },
+  ],
 };
 
 // Inline boot script — runs before React hydrates so the user's
@@ -81,11 +101,11 @@ const THEME_BOOT_SCRIPT = `
   
   try {
     var savedMtheme = localStorage.getItem("chatnexgenai.mtheme");
-    var mtheme = "dark";
+    var mtheme = "light";
     if (savedMtheme === "light" || savedMtheme === "dark") {
       mtheme = savedMtheme;
     }
-    // No system preference fallback — dark is always the default
+    // No system preference fallback — light is the default
     document.documentElement.setAttribute("data-mtheme", mtheme);
     if (mtheme === "dark") {
       document.documentElement.classList.add("dark");
@@ -93,8 +113,8 @@ const THEME_BOOT_SCRIPT = `
       document.documentElement.classList.remove("dark");
     }
   } catch (_e) {
-    document.documentElement.setAttribute("data-mtheme", "dark");
-    document.documentElement.classList.add("dark");
+    document.documentElement.setAttribute("data-mtheme", "light");
+    document.documentElement.classList.remove("dark");
   }
 })();
 `;
@@ -109,8 +129,8 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme={DEFAULT_THEME}
-      data-mtheme="dark"
-      className={`${inter.variable} dark h-full antialiased`}
+      data-mtheme="light"
+      className={`${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -126,28 +146,45 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: jsonLd({
               "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "WappNext Technologies",
-              "alternateName": "WappNext",
-              "url": "https://chatnexgen.online",
-              "logo": "https://chatnexgen.online/images/logo/wappnext-logo.png",
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "telephone": "+91-7745868073",
-                "contactType": "customer service",
-                "areaServed": "IN",
-                "availableLanguage": ["en", "hi"]
-              },
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Pune",
-                "addressRegion": "Maharashtra",
-                "addressCountry": "India"
-              },
-              "description": "AI-Powered WhatsApp CRM & Business Automation Platform helping businesses manage leads and automate customer support."
-            })
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": `${SITE_URL}/#organization`,
+                  "name": SITE_NAME,
+                  "legalName": "Brightwave Digital Products LLP",
+                  "url": SITE_URL,
+                  "logo": `${SITE_URL}/images/logo/wappnext-logo.png`,
+                  "image": `${SITE_URL}${OG_IMAGE.url}`,
+                  "email": "contactwappnext@gmail.com",
+                  "contactPoint": CONTACT_PHONES.map((p) => ({
+                    "@type": "ContactPoint",
+                    "telephone": p.tel,
+                    "email": "contactwappnext@gmail.com",
+                    "contactType": "customer service",
+                    "areaServed": "IN",
+                    "availableLanguage": ["en", "hi"],
+                  })),
+                  "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Pune",
+                    "addressRegion": "Maharashtra",
+                    "addressCountry": "IN",
+                  },
+                  "description": DEFAULT_DESCRIPTION,
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": `${SITE_URL}/#website`,
+                  "url": SITE_URL,
+                  "name": SITE_NAME,
+                  "description": DEFAULT_DESCRIPTION,
+                  "inLanguage": "en-IN",
+                  "publisher": { "@id": `${SITE_URL}/#organization` },
+                },
+              ],
+            }),
           }}
         />
       </head>

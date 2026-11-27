@@ -7,7 +7,7 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useMarketingTheme } from "@/components/marketing/marketing-theme-provider";
 import { ThemeToggle } from "./theme-toggle";
-import { BookDemoTrigger } from "./book-demo-trigger";
+import { OfferBar } from "./offer-bar";
 import { usePublicSettings } from "@/lib/cms/use-public-settings";
 import { cn } from "@/lib/utils";
 
@@ -64,36 +64,40 @@ export function GlassNavbar() {
   // On the home page the bar is fully transparent over the hero until the page scrolls.
   const transparent = pathname === "/" && !scrolled && !isOpen;
   const linkCls = "text-[var(--m-text-secondary)] hover:text-[var(--m-text-heading)]";
-  const ctaHref = isLoggedIn ? "/dashboard" : "/login";
-  const ctaLabel = isLoggedIn ? "Dashboard" : "Sign In";
+  // Signed out: "Log in" + "Start for free". Signed in: a single "Dashboard" button.
+  const ctaHref = isLoggedIn ? "/dashboard" : "/signup";
+  const ctaLabel = isLoggedIn ? "Dashboard" : "Start for free";
 
   return (
     <>
-      <header
-        className={cn(
-          "fixed top-0 inset-x-0 z-50 h-16 border-b transition-colors duration-300 ease-out px-8 sm:px-20 lg:px-32",
-          transparent
-            ? "border-transparent bg-transparent"
-            : "border-[var(--m-border-primary)] bg-[var(--m-bg-primary)]"
-        )}
-      >
+      <header className="fixed top-0 inset-x-0 z-50">
+        {/* Offer strip above the hero (home page only); its height shifts the page via --offer-bar-h. */}
+        {pathname === "/" && <OfferBar />}
+        <div
+          className={cn(
+            "h-20 border-b transition-colors duration-300 ease-out px-8 sm:px-20 lg:px-32",
+            transparent
+              ? "border-transparent bg-transparent"
+              : "border-[var(--m-border-primary)] bg-[var(--m-bg-primary)]"
+          )}
+        >
         <div className="mx-auto flex h-full max-w-[1360px] items-center justify-between">
           <Link href="/" className="flex items-center shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={logoSrc}
               alt={settings.site_branding.siteName || "WappNext Logo"}
-              className="h-8 w-auto object-contain"
+              className="h-12 sm:h-14 w-auto object-contain"
             />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-7">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-xs font-semibold tracking-wide transition-colors whitespace-nowrap",
+                  "text-sm font-semibold tracking-wide transition-colors whitespace-nowrap",
                   pathname === link.href ? "text-emerald-500" : linkCls
                 )}
               >
@@ -104,14 +108,14 @@ export function GlassNavbar() {
 
           <div className="hidden md:flex items-center gap-3 shrink-0">
             <ThemeToggle />
-            <BookDemoTrigger
-              className={cn("text-xs font-semibold transition-colors px-3 py-1.5 whitespace-nowrap cursor-pointer", linkCls)}
-            >
-              Book Demo
-            </BookDemoTrigger>
+            {!isLoggedIn && (
+              <Link href="/login" className={cn("text-sm font-semibold transition-colors px-3 py-2 whitespace-nowrap", linkCls)}>
+                Log in
+              </Link>
+            )}
             <Link
               href={ctaHref}
-              className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-[#00DF82] px-5 py-2.5 text-xs font-semibold text-slate-950 shadow-[0_6px_24px_rgba(0,223,130,0.25)] transition-all duration-300 ease-out hover:-translate-y-px hover:bg-[#00c673]"
+              className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-[#047857] px-6 py-3 text-sm font-semibold !text-white shadow-[0_6px_24px_rgba(4,120,87,0.25)] transition-all duration-300 ease-out hover:-translate-y-px hover:bg-[#065f46]"
             >
               {ctaLabel}
               <ArrowRight className="size-4 transition-transform duration-300 ease-out group-hover:translate-x-1" />
@@ -123,15 +127,16 @@ export function GlassNavbar() {
             onClick={() => setIsOpen((v) => !v)}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
-            className="md:hidden w-9 h-9 border flex items-center justify-center bg-[var(--m-bg-secondary)] border-[var(--m-border-primary)] text-[var(--m-text-secondary)] hover:text-[var(--m-text-heading)]"
+            className="md:hidden w-10 h-10 border flex items-center justify-center bg-[var(--m-bg-secondary)] border-[var(--m-border-primary)] text-[var(--m-text-secondary)] hover:text-[var(--m-text-heading)]"
           >
             {isOpen ? <X className="size-4" /> : <Menu className="size-4" />}
           </button>
         </div>
+        </div>
       </header>
 
       {isOpen && (
-        <div className="fixed inset-x-0 bottom-0 top-16 z-40 p-6 flex flex-col justify-between md:hidden bg-[var(--m-bg-primary)] overflow-y-auto">
+        <div className="fixed inset-x-0 bottom-0 top-[calc(5rem+var(--offer-bar-h,0px))] z-40 p-6 flex flex-col justify-between md:hidden bg-[var(--m-bg-primary)] overflow-y-auto">
           <div className="space-y-6">
             <div className="flex flex-col gap-4">
               <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--m-text-muted)]">
@@ -170,13 +175,19 @@ export function GlassNavbar() {
             <div className="flex justify-center py-1">
               <ThemeToggle className="w-full justify-around" />
             </div>
-            <BookDemoTrigger className="w-full text-center text-xs font-bold py-3 border border-[var(--m-border-primary)] bg-[var(--m-bg-tertiary)] text-[var(--m-text-primary)]">
-              Book Demo
-            </BookDemoTrigger>
+            {!isLoggedIn && (
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className="w-full rounded-lg text-center text-xs font-bold py-3 border border-[var(--m-border-primary)] bg-[var(--m-bg-tertiary)] text-[var(--m-text-primary)]"
+              >
+                Log in
+              </Link>
+            )}
             <Link
               href={ctaHref}
               onClick={() => setIsOpen(false)}
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#00DF82] py-3 text-xs font-semibold text-slate-950 shadow-[0_6px_24px_rgba(0,223,130,0.25)] transition-all duration-300 ease-out hover:bg-[#00c673]"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#047857] py-3 text-xs font-semibold !text-white shadow-[0_6px_24px_rgba(4,120,87,0.25)] transition-all duration-300 ease-out hover:bg-[#065f46]"
             >
               {ctaLabel}
               <ArrowRight className="size-4 transition-transform duration-300 ease-out group-hover:translate-x-1" />

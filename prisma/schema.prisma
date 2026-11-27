@@ -1939,7 +1939,7 @@ model MemberMessageLog {
 /// Pop-up offers on the marketing home page (welcome and exit intent).
 model MarketingOffer {
   id           String     @id @default(uuid())
-  kind         String     @db.VarChar(20) // welcome | exit_intent
+  kind         String     @db.VarChar(20) // welcome | exit_intent | top_banner
   title        String     @db.VarChar(160)
   body         String?    @db.Text
   /// https link or uploaded data URL (PNG/JPEG/WebP).

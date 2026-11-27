@@ -12,7 +12,7 @@ export default function SuperAdminSettingsPage() {
   const [notifyChurn,     setNotifyChurn]     = useState(true);
   const [notifyTrial,     setNotifyTrial]     = useState(false);
   const [agencyName,      setAgencyName]      = useState("WappNext Technologies");
-  const [supportEmail,    setSupportEmail]    = useState("support@chatnexgen.com");
+  const [supportEmail,    setSupportEmail]    = useState("contactwappnext@gmail.com");
   const [siteUrl,         setSiteUrl]         = useState(process.env.NEXT_PUBLIC_SITE_URL ?? "https://crm.example.com");
 
   const handleSave = () => {

@@ -71,7 +71,7 @@ export default function CareersPage() {
                 </div>
               </div>
               <a
-                href={`mailto:careers@chatnexgen.online?subject=Application:%20${encodeURIComponent(job.role)}`}
+                href={`mailto:contactwappnext@gmail.com?subject=Application:%20${encodeURIComponent(job.role)}`}
                 className="bg-[var(--m-bg-secondary)] hover:bg-[var(--m-bg-tertiary)] text-[var(--m-text-secondary)] text-xs font-bold px-4 py-2.5 rounded-lg border border-[var(--m-border-primary)] shrink-0 transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 Apply via Email <ArrowRight className="size-3.5" />
@@ -91,10 +91,10 @@ export default function CareersPage() {
           </p>
           <div className="pt-2">
             <a
-              href="mailto:careers@chatnexgen.online?subject=General%20Inquiry%20-%20Brightwave%20Digital%20Products%20LLP"
-              className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-6 py-2.5 rounded-lg transition-colors cursor-pointer"
+              href="mailto:contactwappnext@gmail.com?subject=General%20Inquiry%20-%20Brightwave%20Digital%20Products%20LLP"
+              className="inline-flex items-center gap-2 bg-[#047857] hover:bg-[#065f46] !text-white text-xs font-bold px-6 py-2.5 rounded-lg transition-colors cursor-pointer"
             >
-              <Send className="size-3.5" /> Send Resume to careers@chatnexgen.online
+              <Send className="size-3.5" /> Send Resume to contactwappnext@gmail.com
             </a>
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { ContactPhones } from "@/components/marketing/contact-phones";
 import { Scale } from "lucide-react";
 
 export default function TermsAndConditionsPage() {
@@ -109,7 +110,10 @@ export default function TermsAndConditionsPage() {
             <p className="text-[var(--m-text-secondary)] font-medium">Operators of WappNext (chatnexgen.online)</p>
             <p>Pune, Maharashtra, India</p>
             <p>
-              Email: <a href="mailto:support@chatnexgen.online" className="text-emerald-400 hover:underline">support@chatnexgen.online</a>
+              Email: <a href="mailto:contactwappnext@gmail.com" className="text-emerald-400 hover:underline">contactwappnext@gmail.com</a>
+            </p>
+            <p>
+              Phone: <ContactPhones />
             </p>
           </div>
         </section>

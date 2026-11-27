@@ -19,12 +19,14 @@ const optText = (max: number) => z.string().trim().max(max).nullish().transform(
 
 // ── offers ───────────────────────────────────────────────────────────
 
-export const OFFER_KINDS = ['welcome', 'exit_intent'] as const;
+/** welcome / exit_intent are pop-ups; top_banner is the strip above the home-page hero. */
+export const OFFER_KINDS = ['welcome', 'exit_intent', 'top_banner'] as const;
 
 export const offerSchema = z
   .object({
     kind: z.enum(OFFER_KINDS),
-    title: z.string().trim().min(2, 'Add a headline.').max(160),
+    // Optional: an image-only pop-up has no headline. Stored as '' (column is NOT NULL).
+    title: z.string().trim().max(160).nullish().transform((v) => v ?? ''),
     body: optText(1000),
     imageUrl: z
       .string()
@@ -47,7 +49,16 @@ export const offerSchema = z
     startsAt: dt.default(null),
     endsAt: dt.default(null),
   })
-  .refine((v) => !v.startsAt || !v.endsAt || v.endsAt > v.startsAt, { message: 'The end date must be after the start date.', path: ['endsAt'] });
+  .refine((v) => !v.startsAt || !v.endsAt || v.endsAt > v.startsAt, { message: 'The end date must be after the start date.', path: ['endsAt'] })
+  .refine((v) => Boolean(v.title || v.body || v.imageUrl || v.ctaLabel || v.promoCodeId), {
+    message: 'Add something to show: a headline, message, image, button or promo code.',
+    path: ['title'],
+  })
+  // The banner has no image, so it needs text or a code to be visible at all.
+  .refine((v) => v.kind !== 'top_banner' || Boolean(v.title || v.body || v.promoCodeId), {
+    message: 'Add the banner text or pick a promo code.',
+    path: ['title'],
+  });
 
 const offerInclude = { promoCode: { select: { id: true, code: true, isActive: true } } } as const;
 
@@ -87,7 +98,7 @@ export async function deleteOffer(id: string) {
   return { deleted: true };
 }
 
-/** Live offers for the home page: one welcome and one exit-intent at most. */
+/** Live offers for the home page: one welcome pop-up, one exit pop-up and one top banner at most. */
 export async function publicOffers(now = new Date()) {
   const rows = await systemDb.marketingOffer.findMany({
     where: { isActive: true, AND: [{ OR: [{ startsAt: null }, { startsAt: { lte: now } }] }, { OR: [{ endsAt: null }, { endsAt: { gte: now } }] }] },
@@ -112,7 +123,7 @@ export async function publicOffers(now = new Date()) {
           version: r.updatedAt.getTime(),
         }
       : null;
-  return { welcome: shape(pick('welcome')), exitIntent: shape(pick('exit_intent')) };
+  return { welcome: shape(pick('welcome')), exitIntent: shape(pick('exit_intent')), topBanner: shape(pick('top_banner')) };
 }
 
 export const offerEventSchema = z.object({ type: z.enum(['view', 'click', 'dismiss']) });

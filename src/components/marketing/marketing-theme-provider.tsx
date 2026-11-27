@@ -11,19 +11,19 @@ interface MarketingThemeContextType {
 }
 
 const MarketingThemeContext = createContext<MarketingThemeContextType>({
-  mode: "dark",
-  resolvedTheme: "dark",
+  mode: "light",
+  resolvedTheme: "light",
   setMode: () => {},
 });
 
 export function MarketingThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>("dark");
-  const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("dark");
+  const [mode, setModeState] = useState<ThemeMode>("light");
+  const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("light");
 
-  // Read from localStorage once on mount — default is always dark
+  // Read from localStorage once on mount — default is light
   useEffect(() => {
     const saved = localStorage.getItem("chatnexgenai.mtheme");
-    const initialMode: ThemeMode = saved === "light" || saved === "dark" ? saved : "dark";
+    const initialMode: ThemeMode = saved === "light" || saved === "dark" ? saved : "light";
     setModeState(initialMode);
     setResolvedTheme(initialMode === "light" ? "light" : "dark");
     document.documentElement.setAttribute("data-mtheme", initialMode === "light" ? "light" : "dark");

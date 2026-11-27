@@ -68,7 +68,7 @@ const bottomNavItems = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-const SUPPORT_EMAIL = "chatnexgen@gmail.com";
+const SUPPORT_EMAIL = "contactwappnext@gmail.com";
 
 interface SidebarProps {
   /** Controlled on mobile by the Header's hamburger button. Ignored on lg+. */

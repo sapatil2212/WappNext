@@ -77,7 +77,7 @@ function MarqueeRow({ items, reverse }: { items: typeof FEATURES; reverse?: bool
 
 export function InteractiveHero() {
   return (
-    <section className="hero-gradient relative -mt-16 overflow-hidden pt-28 pb-6 sm:pt-[120px] sm:pb-8 lg:pt-32 px-8 sm:px-20 lg:px-32">
+    <section className="hero-gradient relative -mt-20 overflow-hidden pt-28 pb-6 sm:pt-[120px] sm:pb-8 lg:pt-32 px-8 sm:px-20 lg:px-32">
       <style>{`
         .hero-gradient { background: linear-gradient(135deg, #07120e 0%, #0a1b14 100%); }
         [data-mtheme="light"] .hero-gradient { background: linear-gradient(135deg, #f8fdfa 0%, #eef9f3 100%); }
@@ -112,12 +112,7 @@ export function InteractiveHero() {
 
             <h1 className="text-3xl font-extrabold tracking-tight text-[var(--m-text-heading)] sm:text-4xl lg:text-[2.6rem] lg:leading-[1.12]">
               {HERO.titleBefore}{" "}
-              <span className="relative inline-block text-emerald-500">
-                {HERO.titleHighlight}
-                <svg className="absolute -bottom-2 left-0 w-full text-emerald-500/40" viewBox="0 0 200 12" fill="none" aria-hidden>
-                  <path d="M2 9.5C50 3.5 150 2 198 8" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-                </svg>
-              </span>{" "}
+              <span className="text-emerald-500">{HERO.titleHighlight}</span>{" "}
               {HERO.titleAfter}
             </h1>
 
@@ -128,7 +123,7 @@ export function InteractiveHero() {
             <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:items-center">
               <Link
                 href="/login"
-                className="group inline-flex items-center justify-center gap-2 rounded-lg bg-[#00DF82] px-5 py-2.5 text-xs font-semibold text-slate-950 shadow-[0_6px_24px_rgba(0,223,130,0.25)] transition-all duration-300 ease-out hover:-translate-y-px hover:bg-[#00c673]"
+                className="group inline-flex items-center justify-center gap-2 rounded-lg bg-[#047857] px-5 py-2.5 text-xs font-semibold !text-white shadow-[0_6px_24px_rgba(4,120,87,0.25)] transition-all duration-300 ease-out hover:-translate-y-px hover:bg-[#065f46]"
               >
                 Get Started
                 <ArrowRight className="size-4 transition-transform duration-300 ease-out group-hover:translate-x-1" />

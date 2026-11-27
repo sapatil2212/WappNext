@@ -87,8 +87,8 @@ export default function SuperAdminCmsPage() {
   });
 
   const [contact, setContact] = useState({
-    supportEmail: "chatnexgen@gmail.com",
-    salesEmail: "sales@chatnexgen.com",
+    supportEmail: "contactwappnext@gmail.com",
+    salesEmail: "contactwappnext@gmail.com",
     phone: "+91 9168 08 1355",
     address: "Pune, Maharashtra, India",
     businessHours: "Monday - Saturday, 9:00 AM - 6:00 PM IST",
@@ -608,7 +608,7 @@ export default function SuperAdminCmsPage() {
                   <input
                     value={contact.supportEmail}
                     onChange={(e) => setContact({ ...contact, supportEmail: e.target.value })}
-                    placeholder="chatnexgen@gmail.com"
+                    placeholder="contactwappnext@gmail.com"
                     className="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-200 font-mono focus:outline-none focus:border-violet-500"
                   />
                 </div>
@@ -618,7 +618,7 @@ export default function SuperAdminCmsPage() {
                   <input
                     value={contact.salesEmail}
                     onChange={(e) => setContact({ ...contact, salesEmail: e.target.value })}
-                    placeholder="sales@chatnexgen.com"
+                    placeholder="contactwappnext@gmail.com"
                     className="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-200 font-mono focus:outline-none focus:border-violet-500"
                   />
                 </div>
